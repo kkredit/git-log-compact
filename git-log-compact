@@ -23,6 +23,7 @@ usage: git%slog-compact [<options>] [<revision-range>] [[--] <path>...]
     --no-times            Omit the time field entirely
     --two-initials        Use maximum of two initials instead of default three
     --three-initials      Use maximum of three initials (default)
+    --full-name           Use the full name instead of initials
     --no-initials         Omit the initials field entirely
     --commit-message      Show the commit message when using --walk-reflogs
     --author-date         Use author dates and times
@@ -84,6 +85,7 @@ sub get_initials($$) {
   $initials =~ s/\[[^[]*?\]/ /g;
   $initials =~ s/\s+/ /g;
   $initials =~ s/^ //g;
+  return $initials if $iw == -1;
   return "jc" if $iw == 2 && $initials eq "junio c hamano ";
   $initials =~ s/([^ ])[^ ]* /$1/g;
   if ($iw == 2) {
@@ -212,6 +214,10 @@ foreach my $arg (get_defaults(), @ARGV) {
   } elsif ($arg eq "--three-initials") {
     # extra option
     $iw = 3;
+    next;
+  } elsif ($arg eq "--full-name") {
+    # extra option
+    $iw = -1;
     next;
   } elsif ($arg eq "--no-initials") {
     # extra option
